@@ -13,7 +13,7 @@ function x=AugmentedLagrangian(fun,sz,opt)
 % L2 subproblem:
 % --------------
 % fun is a function handle for the L2 subproblem and has the form
-% function y=fun(tau,b,eps)
+% function y=fun(tau,b,eps,x0)
 % and should solve the L2 subproblem
 %
 % min y    1/2 ||f(y)||_2^2 + tau/2 || y - b ||_2^2 with accuracy eps 
@@ -23,7 +23,9 @@ function x=AugmentedLagrangian(fun,sz,opt)
 %
 %                                         |       f(y)      |
 % min y  || G(y) ||^2     with   G(y) =   | sqrt(tau) (y-b) |
-%                                         
+%                            
+% x0 is the solution of the previous iteration and can be used as initial
+% solution of the l2 solver.
 %
 %
 % L1 subproblem:
@@ -78,7 +80,7 @@ while go
     % solve L2 subproblem  problem
     % min y    1/2 ||f(y)||_2^2 + tau/2 || y - b ||_2^2 
     %   with b = x+Multiplier/tau
-    y=fun(tau,x-Multiplier/tau,tveps);
+    y=fun(tau,x-Multiplier/tau,tveps,x);
      
     % solve L1 subproblem  problem
     % min x    Phi(x) + tau/2 || x - rhs ||_2^2 

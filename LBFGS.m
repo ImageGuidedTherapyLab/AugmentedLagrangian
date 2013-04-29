@@ -89,7 +89,7 @@ while and(and((norm(g)>tol*max(1e-6,nmg0)),it<iter), 1)
     %sig=0.01;
     if sig>0
         xn=xj-sig*s;
-        %fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%5.3f   step=%s\n',it,f,norm(g),sig,step);
+        fprintf(1,'it=%3.d   f=%e   ||g||=%e   sig=%5.3f   step=%s\n',it,f,norm(g),sig,step);
 
         [fn,gn]=feval(fg,xn);
         % update BFGS-matrix

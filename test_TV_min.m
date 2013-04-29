@@ -35,16 +35,16 @@ toImg=@(x)reshape(x,[N N]);
 % fun2=@(tau,b)lsqnonlin(@(x)ForwardProjection(x,data,tau,b),x0(:),LowerBound(:),UpperBound(:),options);
 
 % use LBFGS for linear operator A, where A' can be computed
-fun3=@(tau,b,eps)toImg(LBFGS(zeros([N*N 1]),@(y)fun_grad(y,A,data,tau,b),1e-1*eps,10,50));
+fun3=@(tau,b,eps,x0)toImg(LBFGS(toVec(x0),@(y)fun_grad(y,A,data,tau,b),eps,10,50));
 
 % Use closed form solution for minimization
-fun4=@(tau,b,eps)(A'*A + tau) \ (A'*data + tau*b);
+fun4=@(tau,b,eps,x0)(A'*A + tau) \ (A'*data + tau*b);
 
 % only function evaluation needed here. Super slow:
 J=@(x)toVec(A*toImg(x)-data);
-fun5=@(tau,b,eps)toImg(LBFGS(zeros([N*N 1]),@(y)fun_grad_FD(y,J,tau,toVec(b)),1e-1*eps,10,50));
+fun5=@(tau,b,eps,x0)toImg(LBFGS(toVec(x0),@(y)fun_grad_FD(y,J,tau,toVec(b)),eps,10,50));
 
 
 %%
 la=1e-4;
-x=AugmentedLagrangian(fun5,[N N],struct('verbose',10,'tau',2*la,'lambda',la,'l2eps',1e-6));
+x=AugmentedLagrangian(fun3,[N N],struct('verbose',10,'tau',2*la,'lambda',la,'l2eps',1e-6));
