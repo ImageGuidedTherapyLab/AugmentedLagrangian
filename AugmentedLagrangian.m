@@ -1,4 +1,4 @@
-function x=TV_min(fun,sz,opt)
+function x=AugmentedLagrangian(fun,sz,opt)
 % solves
 % 
 %      min (y,x)  1/2 ||f(y)||_2^2 + lambda Phi(x) s.t. y=x
@@ -17,6 +17,14 @@ function x=TV_min(fun,sz,opt)
 % and should solve the L2 subproblem
 %
 % min y    1/2 ||f(y)||_2^2 + tau/2 || y - b ||_2^2 with accuracy eps 
+%
+% within the context of lsqnonlin solver, this problem is of the form
+% of a concatenated vector for each L2 term
+%
+%                                         |       f(y)      |
+% min y  || G(y) ||^2     with   G(y) =   | sqrt(tau) (y-b) |
+%                                         
+%
 %
 % L1 subproblem:
 % --------------
