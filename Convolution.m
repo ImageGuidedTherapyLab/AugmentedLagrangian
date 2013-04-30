@@ -113,6 +113,9 @@ classdef Convolution < handle
             C=ifftn(fftn(B)./A.PSFh);
         end
         
+        function sz=getSize(self)
+            sz=size(self.PSF);
+        end
     end
     
     methods(Static) % Static methods to generate paricular convolutions
