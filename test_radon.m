@@ -6,8 +6,8 @@ addpath('../../../common')
 
 % n is the dimension of image and m is the number of angles for the projection;
 
-m=32;
-N=64;
+m=61;
+N=32;
 
 % get a list of angles.
 angist = linspace(-pi/2,pi/2, m+1); angist(end) = [];
@@ -39,6 +39,12 @@ toImg=@(x)reshape(x,[N N]);
 fun2=@(tau,b,eps,x0)linls_cg(Phi,PhiS,data,tau,b,eps,50);
 J=@(x)reshape(Phi(toImg(x))-data,[prod(ds) 1]);
 fun5=@(tau,b,eps,x0)toImg(LBFGS(toVec(x0),@(y)fun_grad_FD(y,@(x)J(x),tau,toVec(b)),eps,20,20));
+
+% R=rand(N*N);
+% [Q R]=qr(R);
+% fun6=@(tau,b,eps,x0)toImg(LBFGS(toVec(x0),@(y)fun_grad_FD_rand(y,@(x)J(x),tau,toVec(b),Q),eps,10,20));
+% 
+% 
 
 la=1e-4;
 x=AugmentedLagrangian(fun5,[N N],struct('verbose',10,'tau',2*la,'lambda',la));
