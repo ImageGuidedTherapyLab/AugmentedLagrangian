@@ -27,7 +27,7 @@ function [sig,xn,fn]=wolfe(xj,s,stg,fct,f,del,theta,sig0)
  xn=xj-sig*s;
  [fn]=feval(fct,xn);
 % Determine maximal sig=sig0/2^k satisfying Armijo
- while (f-fn<del*sig*stg)
+ while and(f-fn<del*sig*stg , sig>1e-8)
   sig=0.5*sig;
   xn=xj-sig*s;
   [fn]=feval(fct,xn);
@@ -66,7 +66,7 @@ iter=0;
   else
    sigp=sigb;
   end
-  
+ end
   if iter==10
       sig=-sig;
   end
