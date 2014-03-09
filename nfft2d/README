@@ -1,0 +1,8 @@
+Example from:
+    http://sourceforge.net/p/gadgetron/home/Non-Cartesian%20FFT/
+    $(GADGETRON_SOURCE)/apps/standalone/gpu/MRI/nfft/2d/
+
+
+
+Example data from:
+     wget https://sourceforge.net/projects/gadgetron/files/testdata/standalone/shepp.tar.gz
