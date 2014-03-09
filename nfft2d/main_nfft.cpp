@@ -117,6 +117,8 @@ int main( int argc, char** argv)
   // Compute trajectories
   timer = new GPUTimer("Computing golden ratio radial trajectories");
   boost::shared_ptr< cuNDArray<_reald2> > traj = compute_radial_trajectory_golden_ratio_2d<_real>( samples_per_profile, num_profiles,  1 );
+  boost::shared_ptr< hoNDArray<_reald2> > host_traj = traj->to_host();
+  write_nd_array<_reald2>( host_traj.get(), "trajector.real");
   delete timer;
   
   // Preprocess
@@ -128,6 +130,8 @@ int main( int argc, char** argv)
   timer = new GPUTimer("Computing density compensation weights");
   boost::shared_ptr< cuNDArray<_real> > dcw = compute_radial_dcw_golden_ratio_2d
     ( samples_per_profile, num_profiles, alpha,_real(1)/((_real)samples_per_profile/(_real)matrix_size.vec[0]) );
+  boost::shared_ptr< hoNDArray<_real> > host_dcw= dcw->to_host();
+  write_nd_array<_real>( host_dcw.get(), "density.real");
   delete timer;
 
   // Gridder

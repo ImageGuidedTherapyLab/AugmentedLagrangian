@@ -6,3 +6,43 @@ Example from:
 
 Example data from:
      wget https://sourceforge.net/projects/gadgetron/files/testdata/standalone/shepp.tar.gz
+
+
+Example output:
+
+$ ./nfft -d shepp_logan_256_256_no_noise.real -o 384 -p 128 -s 384 -k 5.5
+ Running reconstruction with the following parameters: 
+---------------------------------------------------- 
+ (-d) Input image file name (.real)  : shepp_logan_256_256_no_noise.real 
+ (-r) Result file name (.cplx)       : samples.cplx 
+ (-o) Oversampled matrix size        : 384 
+ (-p) Number of profiles             : 128 
+ (-s) Samples per profiles           : 384 
+ (-k) Kernel width                   : 5.5 
+---------------------------------------------------- 
+Loading image from disk: 0.475392 ms
+Uploading, normalizing and converting to complex: 1.75206 ms
+Initializing plan: 2.44896 ms
+Computing golden ratio radial trajectories: 1.45056 ms
+NFFT preprocessing: 1.0665 ms
+Computing density compensation weights: 1.20819 ms
+Computing nfft: 2.82611 ms
+Output result to disk: 0.974208 ms
+$ ./nffth -d samples.cplx -m 256 -o 384 -k 5.5
+ Running reconstruction with the following parameters: 
+---------------------------------------------------- 
+ (-d) Input samples file name (.cplx)  : samples.cplx 
+ (-r) Output image file name (.cplx)   : result.cplx 
+ (-m) Matrix size                      : 256 
+ (-o) Oversampled matrix size          : 384 
+ (-k) Kernel width                     : 5.5 
+---------------------------------------------------- 
+Loading samples from disk: 0.5136 ms
+Uploading samples to device: 0.528032 ms
+Initializing plan: 2.74605 ms
+Computing golden ratio radial trajectories: 0.416416 ms
+NFFT preprocessing: 6.70502 ms
+Computing density compensation weights: 0.878784 ms
+Computing adjoint nfft (gridding): 5.85686 ms
+Output result to disk: 1.9625 ms
+
