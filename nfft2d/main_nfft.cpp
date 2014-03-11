@@ -118,7 +118,7 @@ int main( int argc, char** argv)
   timer = new GPUTimer("Computing golden ratio radial trajectories");
   boost::shared_ptr< cuNDArray<_reald2> > traj = compute_radial_trajectory_golden_ratio_2d<_real>( samples_per_profile, num_profiles,  1 );
   boost::shared_ptr< hoNDArray<_reald2> > host_traj = traj->to_host();
-  write_nd_array<_reald2>( host_traj.get(), "trajector.real");
+  write_nd_array<_reald2>( host_traj.get(), "trajector.cplx");
   delete timer;
   
   // Preprocess

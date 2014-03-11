@@ -47,12 +47,13 @@ def ConvertGadgetronVTK(input_filename,output_filename):
   # read the header
   imagedimension = numpy.fromfile(input_filename, dtype=numpy.int32, count=1, sep='')[0]
   fileheader = numpy.fromfile(input_filename, dtype=numpy.int32, count=1+imagedimension, sep='')
+  print fileheader
   if( imagedimension == 1):
-   dims = (fileheader[1],1,1)
+   dims = [fileheader[1],1,1,1]
   elif( imagedimension == 2):
-   dims = (fileheader[1],fileheader[2],1)
+   dims = [fileheader[1],fileheader[2],1,1]
   elif( imagedimension == 3):
-   dims = (fileheader[1],fileheader[2],fileheader[3])
+   dims = [fileheader[1],fileheader[2],fileheader[3],1]
   else:
    raise RuntimeError('unknown dimension %d ' % imagedimension )
 
@@ -66,8 +67,9 @@ def ConvertGadgetronVTK(input_filename,output_filename):
     datatype  = numpy.float32
     dataImporter.SetDataScalarTypeToFloat() 
   elif extension == 'cplx':
-    datatype  = numpy.complex64
-    dataImporter.SetDataScalarTypeToComplex() 
+    datatype  = numpy.float32
+    dataImporter.SetDataScalarTypeToFloat() 
+    dims[3]=2
   else:
     raise RuntimeError('unknown data type %s ' % extension )
 
@@ -86,14 +88,15 @@ def ConvertGadgetronVTK(input_filename,output_filename):
     
   # convert to vtk
   spacing = [1.,1.,1.]
-  dataImporter.SetNumberOfScalarComponents(1)
+  dataImporter.SetNumberOfScalarComponents(dims[3])
   dataImporter.SetDataExtent( 0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
   dataImporter.SetWholeExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
   dataImporter.SetDataSpacing(spacing[0],spacing[1],spacing[2])
-  numpy_data= numpy_data.reshape(dims[0],dims[1],dims[2])
-  numpy_data= numpy_data.transpose(1,0,2)
+  #numpy_data= numpy_data.reshape(dims[0],dims[1],dims[2])
+  #numpy_data= numpy_data.transpose(1,0,2)
   data_string = numpy_data.tostring()
   dataImporter.CopyImportVoidPointer(data_string, len(data_string))
+  dataImporter.SetScalarArrayName(input_filename.split('.').pop(0))
 
   # write vtk file
   print "writing ", output_filename
