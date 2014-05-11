@@ -4,6 +4,26 @@ import os
 print "using vtk version", vtk.vtkVersion.GetVTKVersion()
 
 ####################################################################
+# write vtk points file
+def WriteVTKPoints(NumpyPhysicalPointsArray,OutputFileName):
+   # loop over points an store in vtk data structure
+   vtkpoints = vtk.vtkPoints()
+   vertices= vtk.vtkCellArray()
+   for point in NumpyPhysicalPointsArray :
+       vertices.InsertNextCell( 1 ); vertices.InsertCellPoint( vtkpoints.InsertNextPoint( [point[0], point[1], 0.0 ]) )
+
+   # set polydata
+   polydata = vtk.vtkPolyData()
+   polydata.SetPoints(vtkpoints)
+   polydata.SetVerts( vertices )
+
+   # write to file
+   polydatawriter = vtk.vtkPolyDataWriter()
+   polydatawriter.SetFileName(OutputFileName)
+   polydatawriter.SetInput(polydata)
+   polydatawriter.Update()
+
+##################################################################
 def ConvertGadgetronVTK(input_filename,output_filename):
   """
   http://sourceforge.net/p/gadgetron/home/Simple%20Array%20File%20Format/
@@ -47,7 +67,7 @@ def ConvertGadgetronVTK(input_filename,output_filename):
   # read the header
   imagedimension = numpy.fromfile(input_filename, dtype=numpy.int32, count=1, sep='')[0]
   fileheader = numpy.fromfile(input_filename, dtype=numpy.int32, count=1+imagedimension, sep='')
-  print fileheader
+  print imagedimension ,fileheader
   if( imagedimension == 1):
    dims = [fileheader[1],1,1,1]
   elif( imagedimension == 2):
@@ -60,6 +80,7 @@ def ConvertGadgetronVTK(input_filename,output_filename):
   # the extension is the datatype
   extension = input_filename.split('.').pop()
   dataImporter = vtk.vtkImageImport()
+  WriteImageData = True
   if extension == 'short':
     datatype  = numpy.short
     dataImporter.SetDataScalarTypeToShort() 
@@ -70,6 +91,7 @@ def ConvertGadgetronVTK(input_filename,output_filename):
     datatype  = numpy.float32
     dataImporter.SetDataScalarTypeToFloat() 
     dims[3]=2
+    WriteImageData = False
   else:
     raise RuntimeError('unknown data type %s ' % extension )
 
@@ -86,25 +108,30 @@ def ConvertGadgetronVTK(input_filename,output_filename):
   if( ExpectedImageSize != numpy_data.size):
     raise RuntimeError('file read error: expected size %d, size found %d ' % (ExpectedImageSize,numpy_data.size) )
     
-  # convert to vtk
-  spacing = [1.,1.,1.]
-  dataImporter.SetNumberOfScalarComponents(dims[3])
-  dataImporter.SetDataExtent( 0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
-  dataImporter.SetWholeExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
-  dataImporter.SetDataSpacing(spacing[0],spacing[1],spacing[2])
-  #numpy_data= numpy_data.reshape(dims[0],dims[1],dims[2])
-  #numpy_data= numpy_data.transpose(1,0,2)
-  data_string = numpy_data.tostring()
-  dataImporter.CopyImportVoidPointer(data_string, len(data_string))
-  dataImporter.SetScalarArrayName(input_filename.split('.').pop(0))
+  # FIXME Hack for trajectory Points
+  if(WriteImageData):
+    # convert to vtk
+    spacing = [1.,1.,1.]
+    dataImporter.SetNumberOfScalarComponents(dims[3])
+    dataImporter.SetDataExtent( 0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
+    dataImporter.SetWholeExtent(0, dims[0]-1, 0, dims[1]-1, 0, dims[2]-1)
+    dataImporter.SetDataSpacing(spacing[0],spacing[1],spacing[2])
+    #numpy_data= numpy_data.reshape(dims[0],dims[1],dims[2])
+    #numpy_data= numpy_data.transpose(1,0,2)
+    data_string = numpy_data.tostring()
+    dataImporter.CopyImportVoidPointer(data_string, len(data_string))
+    dataImporter.SetScalarArrayName(input_filename.split('.').pop(0))
 
-  # write vtk file
-  print "writing ", output_filename
-  vtkImageDataWriter = vtk.vtkDataSetWriter()
-  vtkImageDataWriter.SetFileTypeToBinary()
-  vtkImageDataWriter.SetFileName( output_filename )
-  vtkImageDataWriter.SetInput(dataImporter.GetOutput())
-  vtkImageDataWriter.Update()
+    # write vtk file
+    print "writing ", output_filename
+    vtkImageDataWriter = vtk.vtkDataSetWriter()
+    vtkImageDataWriter.SetFileTypeToBinary()
+    vtkImageDataWriter.SetFileName( output_filename )
+    vtkImageDataWriter.SetInput(dataImporter.GetOutput())
+    vtkImageDataWriter.Update()
+  else:
+    #TODO need to correct spacing
+    WriteVTKPoints(numpy_data.reshape(dims[0],dims[3]) ,output_filename )
 
   #vtkReader.SetFileName( "%s" % (input_filename) ) 
   #vtkReader.Update()
