@@ -46,3 +46,42 @@ Computing density compensation weights: 0.878784 ms
 Computing adjoint nfft (gridding): 5.85686 ms
 Output result to disk: 1.9625 ms
 
+
+
+## gadgetron build instructions
+$ module show cuda/5.0
+-------------------------------------------------------------------
+/usr/local/Modules/3.2.10/modulefiles/cuda/5.0:
+
+module-whatis    loads the cuda 5.0
+module-whatis    sh cuda_5.0.35_linux_64_ubuntu10.04-1.run
+module-whatis    sh cula_dense_free_R17-linux.run
+setenv           CUDA_DIR /opt/apps/cuda/5.0//
+setenv           SDK_DIR /opt/apps/cuda/5.0//NVIDIA_GPU_Computing_SDK
+append-path      PATH /opt/apps/cuda/5.0//bin
+append-path      LD_LIBRARY_PATH /opt/apps/cuda/5.0//lib64
+setenv           CULA_ROOT /opt/apps/cuda/5.0//cula
+setenv           CULA_INC_PATH /opt/apps/cuda/5.0//cula/include
+setenv           CULA_LIB_PATH_32 /opt/apps/cuda/5.0//cula/lib
+setenv           CULA_LIB_PATH_64 /opt/apps/cuda/5.0//cula/lib64
+append-path      LD_LIBRARY_PATH /opt/apps/cuda/5.0//cula/lib64
+-------------------------------------------------------------------
+
+$ module show gadgetron/dev
+-------------------------------------------------------------------
+/usr/local/Modules/3.2.10/modulefiles/gadgetron/dev:
+
+module           load cuda/5.0
+module-whatis    gadgetron build using http://sourceforge.net/p/gadgetron/home/Linux%20Installation/
+module-whatis    cd /opt/apps/Gadgetron/gadgetron-dev/armadillo-4.000.4;cmake -DCMAKE_INSTALL_PREFIX=/opt/apps/Gadgetron/gadgetron-dev/armadillo-4.000.4-install
+module-whatis    cd /opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code/build ;cmake -DCMAKE_INSTALL_PREFIX=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install ..
+module-whatis    cd /opt/apps/Gadgetron/gadgetron-dev/build ;cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/opt/apps/Gadgetron/gadgetron-dev-install -DCULA_INCLUDE_DIR=/opt/apps/cuda/5.0//cula/include -DCULA_LAPACK_BASIC_LIBRARY=/opt/apps/cuda/5.0//cula/lib64/libcula_lapack.so  -DARMADILLO_INCLUDE_DIR=/opt/apps/Gadgetron/gadgetron-dev/armadillo-4.000.4-install/include -DARMADILLO_LIBRARY=/opt/apps/Gadgetron/gadgetron-dev/armadillo-4.000.4-install/lib/libarmadillo.so -DISMRMRD_INCLUDE_DIR=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/include/ -DISMRMRD_LIBRARIES=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/lib/libismrmrd.so -DISMRMRD_SCHEMA_DIR=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/schema/ -DISMRMRD_XSD_INCLUDE_DIR=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code/build/src/xsd/ -DISMRMRD_XSD_SOURCE=/opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code/build/src/xsd/ ..
+setenv           GADGETRON_SOURCE /opt/apps/Gadgetron/gadgetron-dev/
+setenv           GADGETRON_HOME /opt/apps/Gadgetron/gadgetron-dev-install/gadgetron/
+append-path      PATH /opt/apps/Gadgetron/gadgetron-dev-install/gadgetron/bin
+append-path      LD_LIBRARY_PATH /opt/apps/Gadgetron/gadgetron-dev-install/gadgetron/lib
+setenv           ISMRMRD_HOME /opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/
+append-path      PATH /opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/bin
+append-path      LD_LIBRARY_PATH /opt/apps/Gadgetron/gadgetron-dev/ismrmrd-code-install/ismrmrd/lib
+-------------------------------------------------------------------
+
